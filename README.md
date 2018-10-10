@@ -1,2 +1,9 @@
-# Core2
-Library for quick development of command-line tools
+## Core2 Library
+
+This library is designed to easily create command-line tools.
+
+### Functionality
+
+#### Menu support
+
+#### Prompt support
