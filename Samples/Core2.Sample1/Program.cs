@@ -7,7 +7,7 @@ namespace Core2.Samples.Sample1
         public static void Main(string[] args)
         {
             var program = new Program();
-            program.Commands.Push(new PromptCommand());
+            program.Commands.Push(new HelloWorldCommand());
             program.Execute(args);
         }
     }
