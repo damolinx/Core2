@@ -36,7 +36,7 @@ namespace Core2.Commands.Prompt
             var cmdletContext = await CreateCmdletContextAsync(context)
                 .ConfigureAwait(false);
 
-            var parser = this.Configuration.Parser ?? new SimplePromptInputParser();
+            var parser = this.Configuration.Parser ?? new ActionRestPromptInputParser();
 
             while (!cmdletContext.Exit)
             {

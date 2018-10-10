@@ -3,11 +3,13 @@ using System;
 
 namespace Core2.Commands.Prompt.Parsers
 {
-    public class SimplePromptInputParser : PromptInputParser
+    /// <summary>
+    /// Parses out an action name from input, rest of string becomes a single cmdlet argument
+    /// </summary>
+    public sealed class ActionRestPromptInputParser : PromptInputParser
     {
         protected override (string cmdletName, string[] cmdletArguments) Parse(PromptCmdletContext context, string input)
         {
-            //TODO: simple " match
             var breakIndex = input.IndexOf(Char.IsWhiteSpace);
             return (breakIndex > -1)
                 ? (cmdletName: input.Substring(0, breakIndex), cmdletArguments: new[] { input.Substring(breakIndex + 1) })

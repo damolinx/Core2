@@ -1,6 +1,4 @@
 ﻿using Core2.Commands.Prompt;
-using Core2.Sample2.Commands;
-using Core2.Utilities;
 using System;
 using System.ComponentModel;
 using System.IO;
@@ -10,36 +8,21 @@ using System.Threading.Tasks;
 namespace Core2.Sample2.Cmdlets
 {
     [Description("List directory contents")]
-    public class DirectoryCmdlet : PromptCmdlet<CmdPromptContext>
+    public class DirectoryCmdlet : PromptCmdlet
     {
-        public DirectoryCmdlet()
+        public override Task<PromptCmdletResult> ExecuteAsync(PromptCmdletContext context, params string[] args)
         {
-        }
-
-        public override Task<PromptCmdletResult> ExecuteAsync(CmdPromptContext context, params string[] args)
-        {
-            var paths = args.Any() ? args : new[] { context.CurrentDirectory };
-            var formatter = GetFormatter(context);
+            var paths = args.Any()
+                ? args.SelectMany(arg => Directory.Exists(arg) ? Directory.EnumerateFileSystemEntries(arg) : new[] { arg })
+                : new[] { Environment.CurrentDirectory };
 
             foreach (var path in paths)
             {
-                foreach (var fsInfo in Directory.EnumerateFileSystemEntries(path).Select(p => new FileInfo(p)))
-                {
-                    Console.WriteLine(formatter(fsInfo));
-                }
+                var fileInfo = new FileInfo(path);
+                Console.WriteLine(fileInfo.Name);
             }
 
             return Task.FromResult(PromptCmdletResult.Empty);
-        }
-
-        private static Func<FileSystemInfo, string> GetFormatter(CmdPromptContext context)
-        {
-            return (fsInfo) =>
-            {
-                return (fsInfo.Attributes & FileAttributes.Directory) == FileAttributes.Directory
-                ? PathUtilities.EnsureDirectorySeparatorChar(fsInfo.Name)
-                : fsInfo.Name;
-            };
         }
     }
 }

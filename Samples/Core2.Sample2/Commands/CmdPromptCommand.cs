@@ -7,15 +7,14 @@ using System.Threading.Tasks;
 
 namespace Core2.Sample2.Commands
 {
-    public class CmdPromptCommand : PromptCommand<CmdPromptContext>
+    public class CmdPromptCommand : PromptCommand
     {
-        protected override Task<TCmdletContext> CreateCmdletContextAsync<TCmdletContext>(CommandContext context)
+        protected override Task<PromptCmdletContext> CreateCmdletContextAsync(CommandContext context)
         {
-            var cmdletContext = (TCmdletContext)new CmdPromptContext(context, this);
-            return Task.FromResult(cmdletContext);
+            return Task.FromResult(new PromptCmdletContext(context, this));
         }
 
-        protected override IReadOnlyDictionary<string, PromptCmdlet> CreateCmdlets(CmdPromptContext context)
+        protected override IReadOnlyDictionary<string, PromptCmdlet> CreateCmdlets(PromptCmdletContext context)
         {
             var dictionary = new Dictionary<string, PromptCmdlet>(StringComparer.OrdinalIgnoreCase)
             {
@@ -28,7 +27,7 @@ namespace Core2.Sample2.Commands
             return dictionary;
         }
 
-        protected override string GetPromptText(CmdPromptContext context)
+        protected override string GetPromptText(PromptCmdletContext context)
         {
             return Environment.CurrentDirectory + ">";
         }

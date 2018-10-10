@@ -9,7 +9,7 @@ namespace Core2.Commands.Prompt
         /// Gets or sets prompt parser
         /// </summary>
         /// <remarks>
-        /// if <c>null</c>, default <see cref="SimplePromptInputParser"/> is used
+        /// if <c>null</c>, default <see cref="ActionRestPromptInputParser"/> is used
         /// </remarks>
         [JsonIgnore]
         public PromptInputParser Parser { get; set; }
