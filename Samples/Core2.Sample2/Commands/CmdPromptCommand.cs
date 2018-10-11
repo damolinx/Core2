@@ -18,10 +18,11 @@ namespace Core2.Sample2.Commands
         {
             var dictionary = new Dictionary<string, PromptCmdlet>(StringComparer.OrdinalIgnoreCase)
             {
+                { "cat", new CatCmdlet() },
                 { "cd", new ChangeDirectoryCmdlet() },
                 { "dir", new DirectoryCmdlet() },
                 { "exit",  new ExitCmdlet() },
-                { "help",  new HelpCmdlet() }
+                { "help",  new HelpCmdlet() },
             };
 
             return dictionary;

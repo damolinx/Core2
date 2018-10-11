@@ -28,7 +28,14 @@ namespace Core2.Sample2.Cmdlets
             foreach (var path in paths)
             {
                 var fileInfo = new FileInfo(path);
-                Console.WriteLine(fileInfo.Exists ? fileInfo.Name : "File Not Found");
+                if (fileInfo.Exists)
+                {
+                    Console.WriteLine(fileInfo.Name);
+                }
+                else
+                {
+                    Console.Error.WriteLine("File Not Found");
+                }
             }
 
             return Task.FromResult(PromptCmdletResult.Empty);

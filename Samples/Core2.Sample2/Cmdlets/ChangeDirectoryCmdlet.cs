@@ -23,7 +23,7 @@ namespace Core2.Sample2.Cmdlets
                     break;
 
                 default:
-                    Console.WriteLine("Too Many Arguments");
+                    Console.Error.WriteLine("Too Many Arguments");
                     break;
             }
 
