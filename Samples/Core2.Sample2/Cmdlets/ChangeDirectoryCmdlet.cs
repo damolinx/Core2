@@ -1,4 +1,5 @@
 ﻿using Core2.Commands.Prompt;
+using Core2.Sample2.Commands;
 using Core2.Utilities;
 using System;
 using System.ComponentModel;
@@ -7,22 +8,22 @@ using System.Threading.Tasks;
 namespace Core2.Sample2.Cmdlets
 {
     [Description("Change current directory")]
-    public class ChangeDirectoryCmdlet : PromptCmdlet
+    public class ChangeDirectoryCmdlet : PromptCmdlet<CmdPromptCmdletContext>
     {
-        public override Task<PromptCmdletResult> ExecuteAsync(PromptCmdletContext context, params string[] args)
+        public override Task<PromptCmdletResult> ExecuteAsync(CmdPromptCmdletContext context, params string[] args)
         {
             switch (args.Length)
             {
                 case 0:
-                    Console.WriteLine(Environment.CurrentDirectory);
+                    Console.WriteLine(context.CurrentDirectory);
                     break;
 
                 case 1:
-                    Environment.CurrentDirectory = PathUtilities.GetFullPath(args[0], true);
+                    context.CurrentDirectory = PathUtilities.GetFullPath(args[0], true);
                     break;
 
                 default:
-                    Console.WriteLine("Too many arguments");
+                    Console.WriteLine("Too Many Arguments");
                     break;
             }
 

@@ -1,4 +1,5 @@
 ﻿using Core2.Commands.Prompt;
+using Core2.Sample2.Commands;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,9 +10,9 @@ using System.Threading.Tasks;
 namespace Core2.Sample2.Cmdlets
 {
     [Description("List directory contents")]
-    public class DirectoryCmdlet : PromptCmdlet
+    public class DirectoryCmdlet : PromptCmdlet<CmdPromptCmdletContext>
     {
-        public override Task<PromptCmdletResult> ExecuteAsync(PromptCmdletContext context, params string[] args)
+        public override Task<PromptCmdletResult> ExecuteAsync(CmdPromptCmdletContext context, params string[] args)
         {
             IEnumerable<string> paths;
 
@@ -21,7 +22,7 @@ namespace Core2.Sample2.Cmdlets
             }
             else
             {
-                paths = Directory.EnumerateFileSystemEntries(Environment.CurrentDirectory);
+                paths = Directory.EnumerateFileSystemEntries(context.CurrentDirectory);
             }
 
             foreach (var path in paths)
