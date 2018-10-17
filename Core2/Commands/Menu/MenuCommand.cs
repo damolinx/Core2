@@ -13,6 +13,7 @@ namespace Core2.Commands.Menu
         {
             this.RequiresClearScreen = false;
             this.RequiresCursor = false;
+
             this.Title = title ?? throw new ArgumentNullException(nameof(title));
 
             this.MenuEntries = new List<MenuEntry>(
