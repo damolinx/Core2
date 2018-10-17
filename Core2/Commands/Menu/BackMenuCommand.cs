@@ -3,20 +3,13 @@ using System.Threading.Tasks;
 
 namespace Core2.Commands.Menu
 {
-    /// <summary>
-    /// 'Back' command for menu pages
-    /// </summary>
-    public class BackMenuPageCommand : Command
+    public class BackMenuCommand : Command
     {
-        private readonly MenuPageCommand _hostMenuPageCommand;
+        private readonly MenuCommand _hostMenu;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="menuPageCommand">Host menu page command</param>
-        public BackMenuPageCommand(MenuPageCommand menuPageCommand)
+        public BackMenuCommand(MenuCommand menu)
         {
-            _hostMenuPageCommand = menuPageCommand ?? throw new ArgumentNullException(nameof(menuPageCommand));
+            _hostMenu = menu ?? throw new ArgumentNullException(nameof(menu));
         }
 
         public override Task<CommandResult> ExecuteAsync(CommandContext context)
@@ -26,7 +19,7 @@ namespace Core2.Commands.Menu
                 throw new InvalidOperationException("Failed to update command stack");
             }
 
-            if (command != _hostMenuPageCommand)
+            if (command != _hostMenu)
             {
                 throw new InvalidOperationException("Unexpected command stack state");
             }
