@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Core2
 {
     public class ConfigurationBase
     {
+        [JsonExtensionData]
+        protected IDictionary<string, JToken> AdditionalData;
     }
 }

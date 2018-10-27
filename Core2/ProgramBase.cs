@@ -10,20 +10,20 @@ namespace Core2
         protected ProgramBase()
         {
             this.Commands = new ConcurrentStack<Command>();
+            this.Encoding = Encoding.UTF8;
         }
 
         public ConcurrentStack<Command> Commands { get; }
 
-        protected virtual Task<CommandContext> CreateCommandContextAsync(Command command)
+        public Encoding Encoding { get; }
+
+        protected virtual CommandContext CreateCommandContext(Command command)
         {
-            return Task.FromResult(new CommandContext(this));
+            return new CommandContext(this);
         }
 
         public void Execute(params string[] args)
         {
-            Console.InputEncoding = Encoding.UTF8;
-            Console.OutputEncoding = Encoding.UTF8;
-
             try
             {
                 ExecuteAsync(args).GetAwaiter().GetResult();
@@ -31,6 +31,7 @@ namespace Core2
             catch (Exception)
             {
                 //TODO: log
+                throw;
             }
         }
 
@@ -38,17 +39,43 @@ namespace Core2
         {
             while (this.Commands.TryPop(out var command))
             {
-                SetupConsole(command);
-
-                var commandContext = await CreateCommandContextAsync(command)
-                    .ConfigureAwait(false);
-
-                var commandResult = await command.ExecuteAsync(commandContext)
-                    .ConfigureAwait(false);
+                this.SetupConsole(command);
+                var commandContext = CreateCommandContext(command);
+                try
+                {
+                    var commandResult = await command.ExecuteAsync(commandContext)
+                        .ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    //TODO: log
+                    if (!command.HandleException(commandContext, ex))
+                    {
+                        throw;
+                    }
+                }
             }
         }
 
-        private static void SetupConsole(Command command)
+        /// <summary>
+        /// Set up console for program
+        /// </summary>
+        /// <remarks>
+        /// Runs once during program initialization.
+        /// </remarks>
+        protected virtual void SetupConsole()
+        {
+            Console.InputEncoding = this.Encoding;
+            Console.OutputEncoding = this.Encoding;
+        }
+
+        /// <summary>
+        /// Set up console for command
+        /// </summary>
+        /// <remarks>
+        /// Runs once before executing <paramref name="command"/>.
+        /// </remarks>
+        protected virtual void SetupConsole(Command command)
         {
             Console.CursorVisible = command.Settings.RequiresCursor;
 
