@@ -50,9 +50,9 @@ namespace Core2
 
         private static void SetupConsole(Command command)
         {
-            Console.CursorVisible = command.RequiresCursor;
+            Console.CursorVisible = command.Settings.RequiresCursor;
 
-            if (command.RequiresClearScreen)
+            if (command.Settings.RequiresClearScreen)
             {
                 Console.Clear();
             }

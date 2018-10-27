@@ -15,8 +15,8 @@ namespace Core2.Commands.Prompt
         public PromptCommand(PromptConfiguration configuration)
         {
             this.Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-            this.RequiresClearScreen = false;
-            this.RequiresCursor = true;
+            this.Settings.RequiresClearScreen = false;
+            this.Settings.RequiresCursor = true;
         }
 
         public PromptConfiguration Configuration { get; }

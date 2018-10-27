@@ -5,7 +5,7 @@
         public PageMenuCommand(string title, string backLabel = "Back")
             : base(title, backLabel)
         {
-            this.RequiresClearScreen = true;
+            this.Settings.RequiresClearScreen = true;
         }
     }
 }

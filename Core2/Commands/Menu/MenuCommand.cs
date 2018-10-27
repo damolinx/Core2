@@ -11,8 +11,8 @@ namespace Core2.Commands.Menu
     {
         protected MenuCommand(string title, string backLabel = "Back")
         {
-            this.RequiresClearScreen = false;
-            this.RequiresCursor = false;
+            this.Settings.RequiresClearScreen = false;
+            this.Settings.RequiresCursor = false;
 
             this.Title = title ?? throw new ArgumentNullException(nameof(title));
 

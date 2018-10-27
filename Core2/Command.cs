@@ -4,9 +4,12 @@ namespace Core2
 {
     public abstract class Command
     {
-        public bool RequiresCursor { get; set; }
+        public Command(CommandSettings settings = null)
+        {
+            this.Settings = new CommandSettings();
+        }
 
-        public bool RequiresClearScreen { get; set; }
+        public CommandSettings Settings { get; }
 
         public abstract Task<CommandResult> ExecuteAsync(CommandContext context);
     }
