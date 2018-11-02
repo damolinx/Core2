@@ -3,15 +3,14 @@ using Core2.Commands.Prompt.Cmdlets;
 using Core2.Sample2.Cmdlets;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Core2.Sample2.Commands
 {
     public class CmdPromptCommand : PromptCommand<CmdPromptCmdletContext>
     {
-        protected override Task<TCmdletContext> CreateCmdletContextAsync<TCmdletContext>(CommandContext context)
+        protected override TCmdletContext CreateCmdletContext<TCmdletContext>(CommandContext context)
         {
-            return Task.FromResult((TCmdletContext)new CmdPromptCmdletContext(context, this));
+            return (TCmdletContext)new CmdPromptCmdletContext(context, this);
         }
 
         protected override IReadOnlyDictionary<string, PromptCmdlet> CreateCmdlets(CmdPromptCmdletContext context)

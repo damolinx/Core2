@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
-using System.Threading.Tasks;
 
 namespace Core2.Commands.Prompt
 {
     public abstract class PromptCommand<TContext> : PromptCommand
         where TContext : PromptCmdletContext
     {
-        protected abstract Task<TCmdletContext> CreateCmdletContextAsync<TCmdletContext>(CommandContext context)
+        protected abstract TCmdletContext CreateCmdletContext<TCmdletContext>(CommandContext context)
             where TCmdletContext : TContext;
 
         protected virtual IReadOnlyDictionary<string, PromptCmdlet> CreateCmdlets(TContext context)
@@ -23,10 +22,9 @@ namespace Core2.Commands.Prompt
         #region
 
         [EditorBrowsable(EditorBrowsableState.Never)]
-        protected sealed override async Task<PromptCmdletContext> CreateCmdletContextAsync(CommandContext context)
+        protected sealed override PromptCmdletContext CreateCmdletContext(CommandContext context)
         {
-            var cmdletContext = await CreateCmdletContextAsync<TContext>(context)
-               .ConfigureAwait(false);
+            var cmdletContext = CreateCmdletContext<TContext>(context);
             return cmdletContext;
         }
 

@@ -23,7 +23,7 @@ namespace Core2
         /// <c>true</c> if exception was handled, <c>false</c> otherwise.
         /// </returns>
         /// <remarks>
-        /// Command execution would be terminated regradless of return value, but a
+        /// Command execution will be terminated regardless of return value, but a
         /// handled exception won't cause the program to exit.
         /// </remarks>
         public virtual bool HandleException(CommandContext context, Exception ex)

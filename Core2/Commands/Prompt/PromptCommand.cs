@@ -21,9 +21,9 @@ namespace Core2.Commands.Prompt
 
         public PromptConfiguration Configuration { get; }
 
-        protected virtual Task<PromptCmdletContext> CreateCmdletContextAsync(CommandContext context)
+        protected virtual PromptCmdletContext CreateCmdletContext(CommandContext context)
         {
-            return Task.FromResult(new PromptCmdletContext(context, this));
+            return new PromptCmdletContext(context, this);
         }
 
         protected virtual IReadOnlyDictionary<string, PromptCmdlet> CreateCmdlets(PromptCmdletContext context)
@@ -33,8 +33,7 @@ namespace Core2.Commands.Prompt
 
         public sealed override async Task<CommandResult> ExecuteAsync(CommandContext context)
         {
-            var cmdletContext = await CreateCmdletContextAsync(context)
-                .ConfigureAwait(false);
+            var cmdletContext = CreateCmdletContext(context);
 
             var parser = this.Configuration.Parser ?? new ActionRestPromptInputParser();
 
