@@ -1,4 +1,5 @@
-﻿using Core2.Commands.Prompt;
+﻿using Core2.Commands;
+using Core2.Commands.Prompt;
 using System;
 
 namespace Core2.Sample2.Commands

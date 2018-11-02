@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Core2
+namespace Core2.Commands
 {
     public class CommandContext
     {

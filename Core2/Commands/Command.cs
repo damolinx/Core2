@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Core2
+namespace Core2.Commands
 {
     public abstract class Command
     {

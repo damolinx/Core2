@@ -1,4 +1,5 @@
-﻿using Core2.Commands.Menu;
+﻿using Core2.Commands;
+using Core2.Commands.Menu;
 using System;
 using System.IO;
 
