@@ -19,12 +19,7 @@ namespace Core2.Commands.Menu
             this.MenuEntries = new List<MenuEntry>(
                 new[]
                 {
-                    new MenuEntry
-                    {
-                        CommandFactory = () => new BackMenuCommand(this),
-                        Key = ConsoleKey.D0,
-                        Text = backLabel,
-                    }
+                    new MenuEntry(ConsoleKey.D0, backLabel, new BackMenuCommand(this))
                 });
         }
 
@@ -35,14 +30,13 @@ namespace Core2.Commands.Menu
         public override Task<CommandResult> ExecuteAsync(CommandContext context)
         {
             var menuEntries = GetMenuEntries(context);
-
             this.RenderHeader(context);
             this.RenderMenu(context, menuEntries);
 
             var entry = WaitForEntry(menuEntries);
+            var entryCommand = entry.GetCommand(context);
             context.Program.Commands.Push(this);
-            context.Program.Commands.Push(entry.Command);
-
+            context.Program.Commands.Push(entryCommand);
             return Task.FromResult(CommandResult.Empty);
         }
 

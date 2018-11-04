@@ -22,13 +22,10 @@ namespace Core2.Sample3.Menus
             {
                 var text = (drive.IsReady && !string.IsNullOrWhiteSpace(drive.VolumeLabel)) ? drive.VolumeLabel : drive.DriveType.ToString();
                 var title = $"{text} ({drive.Name})";
-                var menuEntry = new MenuEntry
+                var menuEntry = new MenuEntry(baseKey++, title)
                 {
-                    CommandFactory = () => new DriveMenu(title, drive),
-                    Key = baseKey++,
-                    Text = title
+                    CommandFactory = (ctx) => new DriveMenu(title, drive)
                 };
-
                 menuEntries.Add(menuEntry);
             }
 

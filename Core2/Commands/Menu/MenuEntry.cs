@@ -7,11 +7,26 @@ namespace Core2.Commands.Menu
     {
         private Command _command;
 
-        public Command Command => LazyInitializer.EnsureInitialized(ref _command, CommandFactory);
+        public MenuEntry(ConsoleKey key, string text, Command command = null)
+        {
+            _command = command;
+            this.Key = (key != default) ? key : throw new ArgumentException($"Invalid key. Key:{key}", nameof(key));
+            this.Text = !string.IsNullOrWhiteSpace(text) ? text : throw new ArgumentException("Cannot be empty", nameof(text));
+        }
 
-        public Func<Command> CommandFactory { get; set; }
+        public Command GetCommand(CommandContext context)
+        {
+            if (_command == null && this.CommandFactory == null)
+            {
+                throw new InvalidOperationException($"Cannot create command, {nameof(Command)} and {nameof(CommandFactory)} are both null");
+            }
 
-        public ConsoleKey Key { get; set; }
+            return LazyInitializer.EnsureInitialized(ref _command, () => this.CommandFactory(context));
+        }
+
+        public Func<CommandContext, Command> CommandFactory { get; set; }
+
+        public ConsoleKey Key { get; }
 
         public string Text { get; set; }
     }
