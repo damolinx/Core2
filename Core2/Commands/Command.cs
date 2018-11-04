@@ -5,9 +5,9 @@ namespace Core2.Commands
 {
     public abstract class Command
     {
-        public Command(CommandSettings settings = null)
+        protected Command(CommandSettings settings = null)
         {
-            this.Settings = new CommandSettings();
+            this.Settings = settings ?? new CommandSettings();
         }
 
         public CommandSettings Settings { get; }
