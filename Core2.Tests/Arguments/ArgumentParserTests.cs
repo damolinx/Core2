@@ -157,12 +157,12 @@ namespace Core2.Tests.Arguments
         }
 
         [TestMethod]
-        public void Parse_AllowUnregisteredOptions_True()
+        public void Parse_RequiresOptionDefinition_False()
         {
             const string optionName = "Option1";
             var parser = new ArgumentParser
             {
-                RequiresOptionDefinition = true,
+                RequiresOptionDefinition = false,
             };
             var args = new[] { ArgumentParser.DefaultOptionSuffix + optionName };
             var parsedArgs = parser.Parse(args).ToArray();
@@ -173,12 +173,12 @@ namespace Core2.Tests.Arguments
 
         [TestMethod]
         [ExpectedException(typeof(UnknownOptionException))]
-        public void Parse_AllowUnregisteredOptions_False()
+        public void Parse_RequiresOptionDefinition_True()
         {
             const string optionName = "Option1";
             var parser = new ArgumentParser
             {
-                RequiresOptionDefinition = false
+                RequiresOptionDefinition = true
             };
             var args = new[] { ArgumentParser.DefaultOptionSuffix + optionName };
             var parsedArgs = parser.Parse(args).ToArray();
