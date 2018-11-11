@@ -1,13 +1,14 @@
-﻿using Core2.Commands.Prompt;
+﻿using Core2.Commands.Attributes;
+using Core2.Commands.Prompt;
 using Core2.Sample2.Commands;
 using System;
-using System.ComponentModel;
 using System.IO;
 using System.Threading.Tasks;
 
 namespace Core2.Sample2.Cmdlets
 {
-    [Description("Display file contents")]
+    [CommandArgument(LongOptionName = "cat")]
+    [CommandDescription("Display file contents")]
     public class CatCmdlet : PromptCmdlet<CmdPromptCmdletContext>
     {
         public override async Task<PromptCmdletResult> ExecuteAsync(CmdPromptCmdletContext context, params string[] args)

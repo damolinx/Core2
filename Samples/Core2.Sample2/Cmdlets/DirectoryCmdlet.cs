@@ -1,15 +1,16 @@
-﻿using Core2.Commands.Prompt;
+﻿using Core2.Commands.Attributes;
+using Core2.Commands.Prompt;
 using Core2.Sample2.Commands;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Core2.Sample2.Cmdlets
 {
-    [Description("List directory contents")]
+    [CommandArgument(LongOptionName = "dir", ShortOptionName = "ls")]
+    [CommandDescription("List directory contents")]
     public class DirectoryCmdlet : PromptCmdlet<CmdPromptCmdletContext>
     {
         public override Task<PromptCmdletResult> ExecuteAsync(CmdPromptCmdletContext context, params string[] args)

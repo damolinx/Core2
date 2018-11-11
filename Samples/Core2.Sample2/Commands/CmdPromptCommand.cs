@@ -9,9 +9,14 @@ namespace Core2.Sample2.Commands
 {
     public class CmdPromptCommand : PromptCommand<CmdPromptCmdletContext>
     {
+        public CmdPromptCommand()
+        {
+        }
+
         protected override TCmdletContext CreateCmdletContext<TCmdletContext>(CommandContext context)
         {
-            return (TCmdletContext)new CmdPromptCmdletContext(context, this);
+            var promptContext = new CmdPromptCmdletContext(context, this);
+            return (TCmdletContext)promptContext;
         }
 
         protected override IReadOnlyDictionary<string, PromptCmdlet> CreateCmdlets(CmdPromptCmdletContext context)
@@ -21,8 +26,8 @@ namespace Core2.Sample2.Commands
                 { "cat", new CatCmdlet() },
                 { "cd", new ChangeDirectoryCmdlet() },
                 { "dir", new DirectoryCmdlet() },
-                { "exit",  new ExitCmdlet() },
-                { "help",  new HelpCmdlet() },
+                { "exit",  new ExitCmdlet<CmdPromptCmdletContext>() },
+                { "help",  new HelpCmdlet<CmdPromptCmdletContext>() },
             };
 
             return dictionary;

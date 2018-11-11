@@ -11,16 +11,11 @@ namespace Core2.Commands.Menu
     {
         protected MenuCommand(string title, string backLabel = "Back")
         {
-            this.Settings.RequiresClearScreen = false;
-            this.Settings.RequiresCursor = false;
-
-            this.Title = title ?? throw new ArgumentNullException(nameof(title));
-
-            this.MenuEntries = new List<MenuEntry>(
-                new[]
-                {
-                    new MenuEntry(ConsoleKey.D0, backLabel, new BackMenuCommand(this))
-                });
+            this.MenuEntries = new List<MenuEntry>();
+            this.MenuEntries.Add(new MenuEntry(ConsoleKey.D0, backLabel, new BackMenuCommand(this)));
+            this.RequiresClearScreen = false;
+            this.RequiresCursor = false;
+            this.Title = !string.IsNullOrWhiteSpace(title) ? title : throw new ArgumentException("Cannot be empty", nameof(title));
         }
 
         public IList<MenuEntry> MenuEntries { get; }
@@ -61,8 +56,6 @@ namespace Core2.Commands.Menu
             return new ReadOnlyCollection<MenuEntry>(this.MenuEntries);
         }
 
-        #region Private
-
         private static MenuEntry WaitForEntry(IEnumerable<MenuEntry> entries)
         {
             MenuEntry entry;
@@ -74,7 +67,5 @@ namespace Core2.Commands.Menu
             while (entry == null);
             return entry;
         }
-
-        #endregion
     }
 }

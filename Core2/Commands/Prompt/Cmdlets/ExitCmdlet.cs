@@ -1,16 +1,13 @@
-﻿using System.ComponentModel;
+﻿using Core2.Commands.Attributes;
 using System.Threading.Tasks;
 
 namespace Core2.Commands.Prompt.Cmdlets
 {
-    [Description("Exits interactive prompt")]
-    public class ExitCmdlet : PromptCmdlet
+    [CommandDescription("Exits interactive prompt")]
+    public class ExitCmdlet<TContext> : PromptCmdlet<TContext>
+        where TContext : PromptCmdletContext
     {
-        public ExitCmdlet()
-        {
-        }
-
-        public override Task<PromptCmdletResult> ExecuteAsync(PromptCmdletContext context, params string[] args)
+        public override Task<PromptCmdletResult> ExecuteAsync(TContext context, params string[] args)
         {
             context.Exit = true;
             return Task.FromResult(PromptCmdletResult.Empty);

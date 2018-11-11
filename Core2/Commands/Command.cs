@@ -5,12 +5,19 @@ namespace Core2.Commands
 {
     public abstract class Command
     {
-        protected Command(CommandSettings settings = null)
+        protected Command()
         {
-            this.Settings = settings ?? new CommandSettings();
         }
 
-        public CommandSettings Settings { get; }
+        /// <summary>
+        /// Command requires cursor
+        /// </summary>
+        public bool RequiresCursor { get; set; }
+
+        /// <summary>
+        /// Command requires screen to be clear before execution
+        /// </summary>
+        public bool RequiresClearScreen { get; set; }
 
         public abstract Task<CommandResult> ExecuteAsync(CommandContext context);
 

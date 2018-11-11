@@ -1,22 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Core2.Arguments
 {
     public class ArgumentParser
     {
-        public const char DefaultOptionSuffix = '-';
-
-        private readonly char _optionSuffix;
-        private readonly IDictionary<string, OptionArgumentDefinition> _optionsDefinitions;
+        public const string DefaultOptionSuffix = "-";
 
         public ArgumentParser()
             : this(DefaultOptionSuffix, StringComparer.Ordinal)
         {
         }
 
-        public ArgumentParser(char optionSuffix)
+        public ArgumentParser(string optionSuffix)
             : this(optionSuffix, StringComparer.Ordinal)
         {
         }
@@ -26,92 +22,92 @@ namespace Core2.Arguments
         {
         }
 
-        public ArgumentParser(char optionSuffix, StringComparer optionComparer)
+        public ArgumentParser(string optionSuffix, StringComparer optionComparer)
         {
-            _optionsDefinitions = new Dictionary<string, OptionArgumentDefinition>(optionComparer);
-            _optionSuffix = optionSuffix;
+            this.OptionsDefinitions = new OptionDefinitionDictionary(optionComparer);
+            this.OptionSuffix = optionSuffix;
+            this.OptionSuffixComparison = StringComparison.Ordinal;
+            this.RequiresOptionDefinition = true;
         }
 
-        public bool AllowUnregisteredOptions { get; set; }
+        /// <summary>
+        /// Option argument definitions
+        /// </summary>
+        public OptionDefinitionDictionary OptionsDefinitions { get; }
+
+        /// <summary>
+        /// Option suffix (e.g. -, /)
+        /// </summary>
+        public string OptionSuffix { get; }
+
+        /// <summary>
+        /// Every parsed options must be defined in <see cref="OptionsDefinitions"/>
+        /// </summary>
+        /// <remarks>Defaults to <c>true</c></remarks>
+        public bool RequiresOptionDefinition { get; set; }
+
+        /// <summary>
+        /// Option suffix comparer
+        /// </summary>
+        public StringComparison OptionSuffixComparison { get; set; }
+
+        private OptionDefinition GetOptionDefinition(string arg)
+        {
+            var optionName = arg.Substring(this.OptionSuffix.Length);
+            if (!this.OptionsDefinitions.TryGetValue(optionName, out var definition))
+            {
+                if (!this.RequiresOptionDefinition)
+                {
+                    definition = new OptionDefinition(optionName);
+                    this.OptionsDefinitions.Add(definition);
+                }
+                else
+                {
+                    throw new UnknownOptionException(optionName);
+                }
+            }
+
+            return definition;
+        }
 
         public IEnumerable<Argument> Parse(params string[] args)
         {
-            for (var i = 0; i < args.Length; i++)
+            Argument currentArgument = null;
+            foreach (var arg in args)
             {
-                var arg = args[i];
-                if (arg.FirstOrDefault() == _optionSuffix)
+                if (arg.StartsWith(this.OptionSuffix, this.OptionSuffixComparison))
                 {
-                    yield return ParseOption(args, ref i);
+                    if (currentArgument != null)
+                    {
+                        yield return currentArgument;
+                        currentArgument = null;
+                    }
+
+                    currentArgument = new Argument(ArgumentKind.Option)
+                    {
+                        Definition = GetOptionDefinition(arg)
+                    };
+                }
+                else if (currentArgument?.Kind == ArgumentKind.Option)
+                {
+                    currentArgument.Values.Add(arg);
+                    if (currentArgument.Values.Count >= currentArgument.Definition.MaxArguments)
+                    {
+                        yield return currentArgument;
+                        currentArgument = null;
+                    }
                 }
                 else
                 {
-                    yield return ParseLiteral(arg);
-                }
-            }
-        }
-
-        private Argument ParseLiteral(string value)
-        {
-            var arg = new Argument();
-            arg.Values.Add(value);
-            return arg;
-        }
-
-        private Argument ParseOption(string[] args, ref int argIndex)
-        {
-            var optionName = args[argIndex].Substring(1);
-
-            if (!_optionsDefinitions.TryGetValue(optionName, out var optionArgDef))
-            {
-                if (this.AllowUnregisteredOptions)
-                {
-                    optionArgDef = new OptionArgumentDefinition(optionName);
-                    this.RegisterOption(optionArgDef);
-                }
-                else
-                {
-                    throw new UnknownArgumentOptionException(optionName);
+                    yield return new Argument(ArgumentKind.Literal, new[] { arg });
                 }
             }
 
-            var arg = new Argument
+            if (currentArgument != null)
             {
-                Option = optionArgDef
-            };
-
-            for (var i = 0; arg.Values.Count < optionArgDef.MaxArguments && argIndex < args.Length; i++)
-            {
-                arg.Values.Add(args[++argIndex]);
+                yield return currentArgument;
+                currentArgument = null;
             }
-
-            return arg;
-        }
-
-        public void RegisterOption(OptionArgumentDefinition optionArgDefinition)
-        {
-            if (optionArgDefinition == null)
-            {
-                throw new ArgumentNullException(nameof(optionArgDefinition));
-            }
-            _optionsDefinitions[optionArgDefinition.Name] = optionArgDefinition;
-        }
-
-        public void UnregisterOption(OptionArgumentDefinition option)
-        {
-            if (option == null)
-            {
-                throw new ArgumentNullException(nameof(option));
-            }
-            UnregisterOption(option.Name);
-        }
-
-        public void UnregisterOption(string optionName)
-        {
-            if (string.IsNullOrWhiteSpace(optionName))
-            {
-                throw new ArgumentException("Cannot be empty", nameof(optionName));
-            }
-            _optionsDefinitions.Remove(optionName);
         }
     }
 }

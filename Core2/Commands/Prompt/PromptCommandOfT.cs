@@ -19,8 +19,6 @@ namespace Core2.Commands.Prompt
             return base.GetPromptText(context);
         }
 
-        #region
-
         [EditorBrowsable(EditorBrowsableState.Never)]
         protected sealed override PromptCmdletContext CreateCmdletContext(CommandContext context)
         {
@@ -39,7 +37,5 @@ namespace Core2.Commands.Prompt
         {
             return CreateCmdlets((TContext)context);
         }
-
-        #endregion
     }
 }

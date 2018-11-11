@@ -2,9 +2,9 @@
 
 namespace Core2.Arguments
 {
-    public class OptionArgumentDefinition
+    public class OptionDefinition
     {
-        public OptionArgumentDefinition(string name, int maxArguments = 0)
+        public OptionDefinition(string name, int maxArguments = 0)
         {
             if (string.IsNullOrWhiteSpace(name))
             {

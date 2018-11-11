@@ -24,7 +24,7 @@ namespace Core2.Tests.Arguments
             var args = new[] { "File1" };
             var parsedArgs = parser.Parse(args).ToArray();
             Assert.AreEqual(args.Length, parsedArgs.Length, "Expected successful parsing");
-            Assert.IsNull(parsedArgs[0].Option, "Expected no option");
+            Assert.IsNull(parsedArgs[0].Definition, "Expected no option");
             Assert.AreEqual(1, parsedArgs[0].Values.Count, "Expected argument to carry one value");
             Assert.AreEqual(args[0], parsedArgs[0].Values[0], "Expected argument and value to match");
         }
@@ -36,7 +36,7 @@ namespace Core2.Tests.Arguments
             var args = new[] { "\"File 1\"" };
             var parsedArgs = parser.Parse(args).ToArray();
             Assert.AreEqual(args.Length, parsedArgs.Length, "Expected successful parsing");
-            Assert.IsNull(parsedArgs[0].Option, "Expected no option");
+            Assert.IsNull(parsedArgs[0].Definition, "Expected no option");
             Assert.AreEqual(1, parsedArgs[0].Values.Count, "Expected argument to carry one value");
             Assert.AreEqual(args[0], parsedArgs[0].Values[0], "Expected argument and value to match");
         }
@@ -50,7 +50,7 @@ namespace Core2.Tests.Arguments
             Assert.AreEqual(args.Length, parsedArgs.Length, $"Expected successful parsing");
             for (var i = 0; i < args.Length; i++)
             {
-                Assert.IsNull(parsedArgs[i].Option, "Expected no option");
+                Assert.IsNull(parsedArgs[i].Definition, "Expected no option");
                 Assert.AreEqual(1, parsedArgs[i].Values.Count, $"Expected argument to carry one value. Index: {i}");
                 Assert.AreEqual(args[i], parsedArgs[i].Values[0], $"Expected argument and value to match. Index: {i}");
             }
@@ -61,11 +61,11 @@ namespace Core2.Tests.Arguments
         {
             const string optionName = "Option1";
             var parser = new ArgumentParser();
-            parser.RegisterOption(new OptionArgumentDefinition(optionName));
+            parser.OptionsDefinitions.Add(new OptionDefinition(optionName));
             var args = new[] { ArgumentParser.DefaultOptionSuffix + optionName };
             var parsedArgs = parser.Parse(args).ToArray();
             Assert.AreEqual(args.Length, parsedArgs.Length, "Expected successful parsing");
-            Assert.AreEqual(optionName, parsedArgs[0].Option?.Name, "Expected option");
+            Assert.AreEqual(optionName, parsedArgs[0].Definition?.Name, "Expected option");
             Assert.AreEqual(0, parsedArgs[0].Values.Count, "Expected argument to carry no value");
         }
 
@@ -75,11 +75,11 @@ namespace Core2.Tests.Arguments
             const string optionName = "Option1";
             const string optionValue = "File1";
             var parser = new ArgumentParser();
-            parser.RegisterOption(new OptionArgumentDefinition(optionName, 1));
+            parser.OptionsDefinitions.Add(new OptionDefinition(optionName, 1));
             var args = new[] { ArgumentParser.DefaultOptionSuffix + optionName, optionValue };
             var parsedArgs = parser.Parse(args).ToArray();
             Assert.AreEqual(1, parsedArgs.Length, "Expected successful parsing");
-            Assert.AreEqual(optionName, parsedArgs[0].Option?.Name, "Expected option");
+            Assert.AreEqual(optionName, parsedArgs[0].Definition?.Name, "Expected option");
             Assert.AreEqual(1, parsedArgs[0].Values.Count, "Expected argument to carry one value");
             Assert.AreEqual(optionValue, parsedArgs[0].Values[0], "Expected argument and value to match");
         }
@@ -92,15 +92,38 @@ namespace Core2.Tests.Arguments
             const string optionValue2 = "File2";
             const string optionValue3 = "File3";
             var parser = new ArgumentParser();
-            parser.RegisterOption(new OptionArgumentDefinition(optionName, 3));
+            parser.OptionsDefinitions.Add(new OptionDefinition(optionName, 3));
             var args = new[] { ArgumentParser.DefaultOptionSuffix + optionName, optionValue1, optionValue2, optionValue3 };
             var parsedArgs = parser.Parse(args).ToArray();
             Assert.AreEqual(1, parsedArgs.Length, "Expected successful parsing");
-            Assert.AreEqual(optionName, parsedArgs[0].Option?.Name, "Expected option");
+            Assert.AreEqual(optionName, parsedArgs[0].Definition?.Name, "Expected option");
             Assert.AreEqual(3, parsedArgs[0].Values.Count, "Expected argument to carry multiple values");
             Assert.AreEqual(optionValue1, parsedArgs[0].Values[0], $"Expected argument and value to match");
             Assert.AreEqual(optionValue2, parsedArgs[0].Values[1], $"Expected argument and value to match");
             Assert.AreEqual(optionValue3, parsedArgs[0].Values[2], $"Expected argument and value to match");
+        }
+
+        [TestMethod]
+        public void Parse_MultipleMultipleArgumentOption()
+        {
+            const string optionName1 = "Sources";
+            const string optionValue1 = "File1";
+            const string optionName2 = "Targets";
+            const string optionValue2 = "File2";
+            var parser = new ArgumentParser();
+            parser.OptionsDefinitions.Add(new OptionDefinition(optionName1, 3));
+            parser.OptionsDefinitions.Add(new OptionDefinition(optionName2, 3));
+            var args = new[] { ArgumentParser.DefaultOptionSuffix + optionName1, optionValue1, ArgumentParser.DefaultOptionSuffix + optionName2, optionValue2 };
+            var parsedArgs = parser.Parse(args).ToArray();
+            Assert.AreEqual(2, parsedArgs.Length, "Expected successful parsing");
+            //Option1
+            Assert.AreEqual(optionName1, parsedArgs[0].Definition?.Name, "Expected option 1");
+            Assert.AreEqual(1, parsedArgs[0].Values.Count, "Expected option 1 to carry one value");
+            Assert.AreEqual(optionValue1, parsedArgs[0].Values[0], $"Expected value 1 to match");
+            //Option2
+            Assert.AreEqual(optionName2, parsedArgs[1].Definition?.Name, "Expected option 2");
+            Assert.AreEqual(1, parsedArgs[1].Values.Count, "Expected option 2 to carry one value");
+            Assert.AreEqual(optionValue2, parsedArgs[1].Values[0], $"Expected value 2 to match");
         }
 
         [TestMethod]
@@ -113,22 +136,22 @@ namespace Core2.Tests.Arguments
             const string literalValue1 = "File4";
             const string literalValue2 = "File5";
             var parser = new ArgumentParser();
-            parser.RegisterOption(new OptionArgumentDefinition(optionName, 3));
+            parser.OptionsDefinitions.Add(new OptionDefinition(optionName, 3));
             var args = new[] { literalValue1, ArgumentParser.DefaultOptionSuffix + optionName, optionValue1, optionValue2, optionValue3, literalValue2 };
             var parsedArgs = parser.Parse(args).ToArray();
             Assert.AreEqual(3, parsedArgs.Length, "Expected successful parsing");
             // Literal 1
-            Assert.IsNull(parsedArgs[0].Option, "Expected no option");
+            Assert.IsNull(parsedArgs[0].Definition, "Expected no option");
             Assert.AreEqual(1, parsedArgs[0].Values.Count, "Expected argument to carry one value");
             Assert.AreEqual(literalValue1, parsedArgs[0].Values[0], "Expected argument and value to match");
             // Option
-            Assert.AreEqual(optionName, parsedArgs[1].Option?.Name, "Expected option");
+            Assert.AreEqual(optionName, parsedArgs[1].Definition?.Name, "Expected option");
             Assert.AreEqual(3, parsedArgs[1].Values.Count, "Expected argument to carry multiple values");
             Assert.AreEqual(optionValue1, parsedArgs[1].Values[0], $"Expected argument and value to match");
             Assert.AreEqual(optionValue2, parsedArgs[1].Values[1], $"Expected argument and value to match");
             Assert.AreEqual(optionValue3, parsedArgs[1].Values[2], $"Expected argument and value to match");
             // Literal 2
-            Assert.IsNull(parsedArgs[2].Option, "Expected no option");
+            Assert.IsNull(parsedArgs[2].Definition, "Expected no option");
             Assert.AreEqual(1, parsedArgs[2].Values.Count, "Expected argument to carry one value");
             Assert.AreEqual(literalValue2, parsedArgs[2].Values[0], "Expected argument and value to match");
         }
@@ -139,23 +162,23 @@ namespace Core2.Tests.Arguments
             const string optionName = "Option1";
             var parser = new ArgumentParser
             {
-                AllowUnregisteredOptions = true,
+                RequiresOptionDefinition = true,
             };
             var args = new[] { ArgumentParser.DefaultOptionSuffix + optionName };
             var parsedArgs = parser.Parse(args).ToArray();
             Assert.AreEqual(args.Length, parsedArgs.Length, "Expected successful parsing");
-            Assert.AreEqual(optionName, parsedArgs[0].Option?.Name, "Expected option");
+            Assert.AreEqual(optionName, parsedArgs[0].Definition?.Name, "Expected option");
             Assert.AreEqual(0, parsedArgs[0].Values.Count, "Expected argument to carry no value");
         }
 
         [TestMethod]
-        [ExpectedException(typeof(UnknownArgumentOptionException))]
+        [ExpectedException(typeof(UnknownOptionException))]
         public void Parse_AllowUnregisteredOptions_False()
         {
             const string optionName = "Option1";
             var parser = new ArgumentParser
             {
-                AllowUnregisteredOptions = false
+                RequiresOptionDefinition = false
             };
             var args = new[] { ArgumentParser.DefaultOptionSuffix + optionName };
             var parsedArgs = parser.Parse(args).ToArray();

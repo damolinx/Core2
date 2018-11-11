@@ -1,13 +1,14 @@
-﻿using Core2.Commands.Prompt;
+﻿using Core2.Commands.Attributes;
+using Core2.Commands.Prompt;
 using Core2.Sample2.Commands;
 using Core2.Utilities;
 using System;
-using System.ComponentModel;
 using System.Threading.Tasks;
 
 namespace Core2.Sample2.Cmdlets
 {
-    [Description("Change current directory")]
+    [CommandArgument(LongOptionName = "chdir", ShortOptionName = "cd")]
+    [CommandDescription("Change current directory")]
     public class ChangeDirectoryCmdlet : PromptCmdlet<CmdPromptCmdletContext>
     {
         public override Task<PromptCmdletResult> ExecuteAsync(CmdPromptCmdletContext context, params string[] args)

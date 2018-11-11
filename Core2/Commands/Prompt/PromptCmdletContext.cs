@@ -1,22 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Core2.Common;
+using System;
 
 namespace Core2.Commands.Prompt
 {
-    public class PromptCmdletContext
+    public class PromptCmdletContext : ContextBase
     {
-        private readonly CommandContext _commandContext;
-
-        public PromptCmdletContext(CommandContext context, PromptCommand prompt)
+        public PromptCmdletContext(CommandContext parent, PromptCommand prompt)
+            : base(parent)
         {
-            _commandContext = context ?? throw new ArgumentNullException(nameof(context));
-            this.Annotations = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
             this.Prompt = prompt ?? throw new ArgumentNullException(nameof(prompt));
         }
 
-        public IDictionary<string, object> Annotations { get; }
-
-        public bool Exit { get; internal set; }
+        public bool Exit { get; set; }
 
         public PromptCommand Prompt { get; }
     }

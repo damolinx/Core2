@@ -8,18 +8,33 @@ namespace Core2.Commands.Prompt
     public class PromptCommand : Command
     {
         public PromptCommand()
-            : this(new PromptConfiguration())
+            : this(new ActionRestPromptInputParser())
         {
         }
 
-        public PromptCommand(PromptConfiguration configuration)
+        public PromptCommand(PromptInputParser parser)
         {
-            this.Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-            this.Settings.RequiresClearScreen = false;
-            this.Settings.RequiresCursor = true;
+            this.Parser = parser ?? throw new ArgumentNullException(nameof(parser));
+            this.RequiresClearScreen = false;
+            this.RequiresCursor = true;
         }
 
-        public PromptConfiguration Configuration { get; }
+        /// <summary>
+        /// Gets or sets prompt parser
+        /// </summary>
+        /// <remarks>
+        /// if <c>null</c>, default <see cref="ActionRestPromptInputParser"/> is used
+        /// </remarks>
+        public PromptInputParser Parser { get; set; }
+
+        /// <summary>
+        /// Gets or sets whether available cmdlets list is dynamic.
+        /// </summary>
+        /// <remarks>
+        /// When dynamic, <see cref="CreateCmdlets(PromptCmdletContext)"/>
+        /// is invoked for every cmdlet resolution instead of just at startup.
+        /// </remarks>
+        public bool UseDynamicCmdlets { get; set; }
 
         protected virtual PromptCmdletContext CreateCmdletContext(CommandContext context)
         {
@@ -35,8 +50,6 @@ namespace Core2.Commands.Prompt
         {
             var cmdletContext = CreateCmdletContext(context);
 
-            var parser = this.Configuration.Parser ?? new ActionRestPromptInputParser();
-
             while (!cmdletContext.Exit)
             {
                 var promptText = GetPromptText(cmdletContext);
@@ -46,7 +59,7 @@ namespace Core2.Commands.Prompt
 
                 if (!string.IsNullOrEmpty(input))
                 {
-                    if (parser.TryParseInput(cmdletContext, input, out var parsedInput))
+                    if (this.Parser.TryParseInput(cmdletContext, input, out var parsedInput))
                     {
                         // Map input to cmdlet
                         if (this.GetCmdlets(cmdletContext).TryGetValue(parsedInput.cmdletName, out var cmdlet))
@@ -84,7 +97,7 @@ namespace Core2.Commands.Prompt
             const string CmdletsKey = "Prompt.Cmdlets";
             IReadOnlyDictionary<string, PromptCmdlet> cmdlets;
 
-            if (!this.Configuration.UseDynamicCmdlets)
+            if (!this.UseDynamicCmdlets)
             {
                 if (!context.Annotations.TryGetValue(CmdletsKey, out var storedCmdlets))
                 {

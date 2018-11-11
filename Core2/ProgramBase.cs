@@ -23,7 +23,7 @@ namespace Core2
             return new CommandContext(this);
         }
 
-        public void Execute(params string[] args)
+        public virtual void Execute(params string[] args)
         {
             try
             {
@@ -78,9 +78,9 @@ namespace Core2
         /// </remarks>
         protected virtual void SetupConsole(Command command)
         {
-            Console.CursorVisible = command.Settings.RequiresCursor;
+            Console.CursorVisible = command.RequiresCursor;
 
-            if (command.Settings.RequiresClearScreen)
+            if (command.RequiresClearScreen)
             {
                 Console.Clear();
             }
