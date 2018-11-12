@@ -1,6 +1,6 @@
 ## Core2 Library
 
-This library is designed to easily create command-line tools.
+This library is intended to help with creation of command-line tools.
 
 ### Functionality
 
