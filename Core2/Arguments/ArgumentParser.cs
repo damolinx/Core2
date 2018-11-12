@@ -27,7 +27,6 @@ namespace Core2.Arguments
             this.OptionsDefinitions = new OptionDefinitionDictionary(optionComparer);
             this.OptionSuffix = optionSuffix;
             this.OptionSuffixComparison = StringComparison.Ordinal;
-            this.RequiresOptionDefinition = true;
         }
 
         /// <summary>
@@ -41,22 +40,16 @@ namespace Core2.Arguments
         public string OptionSuffix { get; }
 
         /// <summary>
-        /// Every parsed options must be defined in <see cref="OptionsDefinitions"/>
-        /// </summary>
-        /// <remarks>Defaults to <c>true</c></remarks>
-        public bool RequiresOptionDefinition { get; set; }
-
-        /// <summary>
         /// Option suffix comparer
         /// </summary>
         public StringComparison OptionSuffixComparison { get; set; }
 
-        private OptionDefinition GetOptionDefinition(string arg)
+        private OptionDefinition GetOptionDefinition(string arg, bool requireDefinition)
         {
             var optionName = arg.Substring(this.OptionSuffix.Length);
             if (!this.OptionsDefinitions.TryGetValue(optionName, out var definition))
             {
-                if (!this.RequiresOptionDefinition)
+                if (!requireDefinition)
                 {
                     definition = new OptionDefinition(optionName);
                     this.OptionsDefinitions.Add(definition);
@@ -70,7 +63,7 @@ namespace Core2.Arguments
             return definition;
         }
 
-        public IEnumerable<Argument> Parse(params string[] args)
+        public IEnumerable<Argument> Parse(string[] args, bool requireDefinition)
         {
             Argument currentArgument = null;
             foreach (var arg in args)
@@ -85,7 +78,7 @@ namespace Core2.Arguments
 
                     currentArgument = new Argument(ArgumentKind.Option)
                     {
-                        Definition = GetOptionDefinition(arg)
+                        Definition = GetOptionDefinition(arg, requireDefinition)
                     };
                 }
                 else if (currentArgument?.Kind == ArgumentKind.Option)

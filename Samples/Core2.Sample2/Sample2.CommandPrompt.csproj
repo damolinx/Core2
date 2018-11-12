@@ -3,7 +3,8 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.1</TargetFramework>
-    <AssemblyName>Core2.Sample2</AssemblyName>
+    <AssemblyName>CommandPrompt</AssemblyName>
+    <RootNamespace>Core2.Samples.Sample2</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

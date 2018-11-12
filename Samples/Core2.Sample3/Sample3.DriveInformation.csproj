@@ -3,6 +3,8 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.1</TargetFramework>
+    <AssemblyName>DriveInformation</AssemblyName>
+    <RootNamespace>Core2.Samples.Sample3</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
