@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Core2.Arguments
 {
@@ -63,7 +64,7 @@ namespace Core2.Arguments
             return definition;
         }
 
-        public IEnumerable<Argument> Parse(string[] args, bool requireDefinition)
+        private IEnumerable<Argument> InnerParse(string[] args, bool requireDefinition)
         {
             Argument currentArgument = null;
             foreach (var arg in args)
@@ -83,11 +84,15 @@ namespace Core2.Arguments
                 }
                 else if (currentArgument?.Kind == ArgumentKind.Option)
                 {
-                    currentArgument.Values.Add(arg);
-                    if (currentArgument.Values.Count >= currentArgument.Definition.MaxArguments)
+                    if (currentArgument.Values.Count < currentArgument.Definition.MaxArguments)
                     {
+                        currentArgument.Values.Add(arg);
+                    }
+                    else
+                    { 
                         yield return currentArgument;
                         currentArgument = null;
+                        yield return new Argument(ArgumentKind.Literal, new[] { arg });
                     }
                 }
                 else
@@ -101,6 +106,12 @@ namespace Core2.Arguments
                 yield return currentArgument;
                 currentArgument = null;
             }
+        }
+
+        public IEnumerable<Argument> Parse(string[] args, bool requireDefinition)
+        {
+            // Ensure no unevaluated enumeration is returned
+            return InnerParse(args, requireDefinition).ToList();
         }
     }
 }
